@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WATERLIFE - Reto Diario de Agua</title>
+  
+  <!-- Configuración PWA / Android -->
+  <meta name="theme-color" content="#0284c7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tipografía estilo Duolingo (Fredoka / Nunito) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="duo-layout">
+
+    <!-- BARRA LATERAL IZQUIERDA -->
+    <aside class="left-sidebar">
+      <div class="logo-container">
+        <div class="waterlife-logo">
+          <span class="logo-icon">💧</span>
+          <span class="logo-text">WATERLIFE</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="navHomeBtn">
+          <span class="nav-icon">💧</span>
+          <span class="nav-label">RETO HOY</span>
+        </button>
+
+        <button class="nav-item" id="navTipsBtn">
+          <span class="nav-icon">💡</span>
+          <span class="nav-label">CONSEJOS</span>
+        </button>
+
+        <button class="nav-item" id="navSettingsBtn">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">AJUSTES</span>
+        </button>
+
+        <button class="nav-item" id="navNotifBtn">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-label">RECORDATORIOS</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-filler">
+        <div class="mascot-mini-card">
+          <div class="mini-mascot-avatar">💧</div>
+          <div class="mini-mascot-text">
+            <strong>Gotita Cuidadora</strong>
+            <span>¡Tu aliada diaria!</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- COLUMNA CENTRAL -->
+    <main class="main-content">
+      
+      <header class="mobile-top-header">
+        <div class="waterlife-logo-mobile">
+          <span>💧</span> <strong>WATERLIFE</strong>
+        </div>
+        <div class="mobile-stats">
+          <div class="stat-pill streak-pill">
+            <span>🔥</span> <strong id="mobileStreakCount">0</strong>
+          </div>
+          <div class="stat-pill water-pill">
+            <span>💧</span> <strong id="mobileNavPercent">0%</strong>
+          </div>
+          <button class="mobile-settings-btn" id="mobileSettingsBtn">⚙️</button>
+        </div>
+      </header>
+
+      <!-- Mascota "Gotita" -->
+      <section class="mascot-interactive-area">
+        <div class="speech-bubble clickeable-tip" id="speechBubble" title="¡Haz clic para ver otro consejo de agua!">
+          <div class="tip-tag">💡 CONSEJO DEL DÍA (Haz clic para cambiar)</div>
+          <div class="tip-message" id="mascotMessage">
+            ¡Hola! Toma agua a lo largo del día para mantener tu energía y concentración al máximo.
+          </div>
+        </div>
+
+        <div class="mascot-wrapper clickeable-mascot" id="mascotWrapper" title="¡Haz clic en Gotita!">
+          <svg id="mascotSvg" viewBox="0 0 160 160" class="mascot-svg">
+            <ellipse cx="80" cy="148" rx="45" ry="9" fill="rgba(2, 132, 199, 0.2)" />
+            <path id="mascotBody" class="mascot-droplet" d="M80 18 C80 18 30 75 30 110 A50 50 0 0 0 130 110 C130 75 80 18 80 18 Z" 
+                  fill="#38bdf8" stroke="#0284c7" stroke-width="5" stroke-linejoin="round" />
+            <path d="M52 90 Q48 105 56 118" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.8"/>
+            
+            <g id="eyesGroup" class="eyes-animated">
+              <g class="eye-lid left-eye">
+                <ellipse cx="62" cy="100" rx="7" ry="9" fill="#0f172a" />
+                <g class="pupil-track">
+                  <circle cx="60" cy="98" r="3" fill="#ffffff" />
+                  <circle cx="63.5" cy="101.5" r="1.5" fill="#ffffff" opacity="0.75" />
+                </g>
+              </g>
+
+              <g class="eye-lid right-eye">
+                <ellipse cx="98" cy="100" rx="7" ry="9" fill="#0f172a" />
+                <g class="pupil-track">
+                  <circle cx="96" cy="98" r="3" fill="#ffffff" />
+                  <circle cx="99.5" cy="101.5" r="1.5" fill="#ffffff" opacity="0.75" />
+                </g>
+              </g>
+            </g>
+
+            <circle cx="49" cy="112" r="6" fill="#f472b6" opacity="0.6"/>
+            <circle cx="111" cy="112" r="6" fill="#f472b6" opacity="0.6"/>
+
+            <path id="mascotMouth" class="mouth-animated" d="M70 114 Q80 126 90 114" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+            <g id="sunglasses" style="display: none;">
+              <rect x="48" y="90" width="28" height="20" rx="4" fill="#1e293b"/>
+              <rect x="84" y="90" width="28" height="20" rx="4" fill="#1e293b"/>
+              <line x1="76" y1="98" x2="84" y2="98" stroke="#1e293b" stroke-width="4"/>
+              <line x1="40" y1="95" x2="48" y2="95" stroke="#1e293b" stroke-width="3"/>
+              <line x1="112" y1="95" x2="120" y2="95" stroke="#1e293b" stroke-width="3"/>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- TAMBO CENTRAL -->
+      <section class="tambo-stage">
+        <div class="tambo-container">
+          <div class="tambo-ticks">
+            <span class="tick" style="bottom: 85%;">100%</span>
+            <span class="tick" style="bottom: 65%;">75%</span>
+            <span class="tick" style="bottom: 45%;">50%</span>
+            <span class="tick" style="bottom: 25%;">25%</span>
+          </div>
+
+          <div class="tambo-cap"></div>
+          <div class="tambo-handle"></div>
+
+          <div class="tambo-body">
+            <div class="tambo-liquid" id="waterLiquid">
+              <div class="tambo-wave-track">
+                <svg class="tambo-wave wave-back" viewBox="0 0 1200 60" preserveAspectRatio="none">
+                  <path d="M0,25 C150,50 350,0 500,25 C650,50 850,0 1000,25 C1150,50 1200,25 1200,25 L1200,60 L0,60 Z" fill="rgba(56, 189, 248, 0.75)"/>
+                </svg>
+                <svg class="tambo-wave wave-front" viewBox="0 0 1200 60" preserveAspectRatio="none">
+                  <path d="M0,30 C150,0 350,50 500,30 C650,0 850,50 1000,30 C1150,0 1200,30 1200,30 L1200,60 L0,60 Z" fill="#0284c7"/>
+                </svg>
+              </div>
+
+              <div class="bubbles-rise">
+                <span class="bubble b1"></span>
+                <span class="bubble b2"></span>
+                <span class="bubble b3"></span>
+                <span class="bubble b4"></span>
+              </div>
+            </div>
+
+            <div class="tambo-readout">
+              <div class="percentage-big" id="waterPercentage">0%</div>
+              <div class="intake-badge">
+                <span id="currentIntake">0</span> / <span id="goalIntake">2500</span> ml
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="target-status-pill" id="statusBadge">
+          💧 Faltan <strong id="remainingIntake">2500</strong> ml para la meta de hoy
+        </div>
+      </section>
+
+      <!-- BOTONES DE REGISTRO RÁPIDO -->
+      <section class="quick-intake-section">
+        <h3 class="section-heading">¿Cuánto tomaste?</h3>
+        
+        <div class="action-grid" id="buttonsGrid">
+          <button class="duo-btn duo-btn-bottle" data-amount="1000">
+            <div class="btn-svg-icon">
+              <svg viewBox="0 0 64 64" class="custom-drink-svg">
+                <rect x="26" y="4" width="12" height="7" rx="2" fill="#0284c7"/>
+                <path d="M28 11 L28 16 L20 25 L20 56 A6 6 0 0 0 26 62 L38 62 A6 6 0 0 0 44 56 L44 25 L36 16 L36 11 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+                <rect x="22" y="32" width="20" height="15" rx="3" fill="#38bdf8"/>
+                <text x="32" y="43" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">1 L</text>
+                <path d="M22 47 C25 46 29 48 32 47 C35 46 39 48 42 47 L42 56 A4 4 0 0 1 38 60 L26 60 A4 4 0 0 1 22 56 Z" fill="#0ea5e9"/>
+              </svg>
+            </div>
+            <div class="btn-info">
+              <span class="btn-title">Botella de Litro</span>
+              <span class="btn-subtitle">+1000 ml (1 L)</span>
+            </div>
+          </button>
+
+          <button class="duo-btn duo-btn-medium" data-amount="600">
+            <div class="btn-svg-icon">
+              <svg viewBox="0 0 64 64" class="custom-drink-svg">
+                <rect x="28" y="4" width="8" height="6" rx="2" fill="#38bdf8"/>
+                <rect x="24" y="10" width="16" height="5" rx="2" fill="#0284c7"/>
+                <path d="M22 15 C22 24 25 28 24 35 C23 42 21 48 21 55 A5 5 0 0 0 26 60 L38 60 A5 5 0 0 0 43 55 C43 48 41 42 40 35 C39 28 42 24 42 15 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+                <rect x="22.5" y="32" width="19" height="13" rx="2" fill="#0284c7"/>
+                <text x="32" y="42" font-size="7.5" font-weight="900" fill="#ffffff" text-anchor="middle">600 ml</text>
+                <path d="M22 45 L42 45 L42 55 A4 4 0 0 1 38 59 L26 59 A4 4 0 0 1 22 55 Z" fill="#38bdf8"/>
+              </svg>
+            </div>
+            <div class="btn-info">
+              <span class="btn-title">Botella Chica</span>
+              <span class="btn-subtitle">+600 ml</span>
+            </div>
+          </button>
+
+          <button class="duo-btn duo-btn-glass" data-amount="250">
+            <div class="btn-svg-icon">
+              <svg viewBox="0 0 64 64" class="custom-drink-svg">
+                <path d="M19 12 L24 57 A4 4 0 0 0 28 61 L36 61 A4 4 0 0 0 40 57 L45 12 Z" fill="#f8fafc" stroke="#0284c7" stroke-width="2.5"/>
+                <path d="M21 28 Q32 32 43 28 L39.5 57 A3 3 0 0 1 36.5 60 L27.5 60 A3 3 0 0 1 24.5 57 Z" fill="#38bdf8"/>
+                <rect x="28" y="34" width="8" height="8" rx="2" fill="#ffffff" opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="btn-info">
+              <span class="btn-title">Vaso de Agua</span>
+              <span class="btn-subtitle">+250 ml</span>
+            </div>
+          </button>
+
+          <button class="duo-btn duo-btn-add" id="openAddModalBtn">
+            <div class="btn-icon">➕</div>
+            <div class="btn-info">
+              <span class="btn-title">Personalizado</span>
+              <span class="btn-subtitle">Tu propio vaso</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="undo-wrapper">
+          <button class="text-btn" id="undoBtn" disabled title="Solo puedes deshacer el último registro 1 vez">
+            ↩️ Deshacer último registro (Solo 1 vez)
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BARRA LATERAL DERECHA -->
+    <aside class="right-sidebar">
+      
+      <div class="top-stats-row">
+        <div class="stat-pill streak-pill" title="Días consecutivos cumplidos">
+          <span>🔥</span> <strong id="desktopStreakCount">0</strong>
+        </div>
+        <div class="stat-pill water-pill" title="Porcentaje de hoy">
+          <span>💧</span> <strong id="desktopNavPercent">0%</strong>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Racha -->
+      <div class="duo-card streak-feature-card">
+        <div class="duo-card-header">
+          <span class="flame-big">🔥</span>
+          <div>
+            <h3>Tu Racha Diaria</h3>
+            <p id="desktopStreakAdvice">Cumple tu meta cada 24h para no perderla.</p>
+          </div>
+        </div>
+
+        <div class="streak-days-row" id="weekPills"></div>
+      </div>
+
+      <!-- Tarjeta de Recordatorios / Notificaciones con Botón de Desactivación -->
+      <div class="duo-card notification-card">
+        <h4 class="card-subtitle">🔔 RECORDATORIOS DUOLINGO</h4>
+        <p class="tip-body-text" style="font-size: 0.82rem;">
+          Recibe alertas diarias para tomar agua y mantener viva tu racha.
+        </p>
+
+        <button class="duo-btn duo-btn-notif" id="toggleNotificationsBtn">
+          <span>🔔</span> Activar Notificaciones
+        </button>
+        <small id="notifStatusText" style="font-size:0.75rem; color:#64748b; font-weight:700; text-align:center;"></small>
+      </div>
+
+      <!-- Tarjeta de Tip -->
+      <div class="duo-card tip-card">
+        <h4 class="card-subtitle">💡 ¿SABÍAS ESTO?</h4>
+        <p class="tip-body-text" id="sideTipText">
+          Tomar agua aumenta tu energía y alivia el cansancio, ya que tu cerebro está compuesto por un 75% de agua.
+        </p>
+      </div>
+
+      <!-- Tarjeta de Desafío -->
+      <div class="duo-card challenge-card">
+        <h4 class="card-subtitle">🎯 DESAFÍO DE HOY</h4>
+        <div class="challenge-content">
+          <div class="challenge-icon">⚡</div>
+          <div class="challenge-info">
+            <strong>Hidratación Total</strong>
+            <span id="challengeSub">Alcanza el 100% de tu meta</span>
+            <div class="challenge-bar-bg">
+              <div class="challenge-bar-fill" id="challengeBarFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- CELEBRACIÓN DE META CUMPLIDA -->
+  <div class="fullscreen-celebration" id="epicCelebration">
+    <div class="celebration-backdrop"></div>
+    
+    <div class="epic-stage">
+      <div class="radiant-glow"></div>
+
+      <div class="water-glass-scene" id="glassScene">
+        <div class="water-stream" id="waterStream"></div>
+        <div class="splash-particles">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="celebration-glass" id="spinningGlass">
+          <div class="glass-liquid" id="glassLiquid">
+            <div class="liquid-foam"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="streak-reveal-scene" id="streakScene">
+        <div class="mega-flame">🔥</div>
+        <div class="streak-badge-popup">
+          <span class="streak-sparkle">✨</span>
+          <span class="streak-days-number" id="celebrationDaysCount">1 DÍA</span>
+          <span class="streak-sparkle">✨</span>
+        </div>
+      </div>
+
+      <div class="celebration-headings">
+        <h1 class="epic-title">¡META DEL DÍA CUMPLIDA!</h1>
+        <p class="epic-subtitle" id="celebrationSubtitle">
+          ¡Tu cuerpo está completamente hidratado y tu racha acaba de encenderse!
+        </p>
+      </div>
+
+      <button class="duo-btn duo-btn-epic" id="closeCelebrationBtn">
+        ¡CONTINUAR! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- CELEBRACIÓN DE PÉRDIDA DE RACHA (VASO IDÉNTICO ROTACIÓN / QUIEBRE SIN EMOJIS EXTRA) -->
+  <div class="fullscreen-celebration streak-lost-celebration" id="streakLostModal">
+    <div class="celebration-backdrop streak-lost-backdrop"></div>
+    
+    <div class="epic-stage">
+      <div class="broken-glass-stage">
+        <!-- Vaso Idéntico al de Celebración -->
+        <div class="celebration-glass broken-celebration-glass" id="fallingGlass">
+          <div class="glass-liquid" style="height: 30%;">
+            <div class="liquid-foam"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Únicamente Corazón y Fueguito -->
+      <div class="extinguished-flame">💔🔥</div>
+
+      <div class="streak-down-counter">
+        <span class="lost-streak-number" id="lostStreakDisplay">0</span>
+        <span class="lost-streak-label">RACHA ANTERIOR</span>
+      </div>
+
+      <div class="celebration-headings">
+        <h1 class="epic-title streak-lost-title">¡OH NO! RACHA PERDIDA</h1>
+        <p class="epic-subtitle">
+          Pasaron más de 24 horas sin completar tu meta. ¡No te desanimes, hoy es un excelente día para empezar una nueva racha!
+        </p>
+      </div>
+
+      <button class="duo-btn duo-btn-epic streak-lost-btn" id="closeStreakLostBtn">
+        ¡REINICIAR MI RACHA HOY! 🔥
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE ONBOARDING -->
+  <div class="modal-overlay" id="onboardingModal">
+    <div class="modal-card onboarding-card">
+      <div class="onboarding-mascot">
+        <span>💧</span>
+      </div>
+      <h2 class="modal-title">¡Bienvenido a WATERLIFE!</h2>
+      <p class="modal-desc">
+        Configura tu meta de hidratación para encender tu racha de hoy:
+      </p>
+
+      <div class="tab-selectors">
+        <button type="button" class="tab-btn active" id="onboardingTabCalc">⚖️ Con Peso y Altura</button>
+        <button type="button" class="tab-btn" id="onboardingTabManual">✏️ Meta Personalizada</button>
+      </div>
+
+      <div id="onboardingCalcSection" class="tab-content active">
+        <div class="input-group">
+          <label for="onboardingWeight">Tu Peso en kilogramos (kg):</label>
+          <input type="number" id="onboardingWeight" value="70" placeholder="70" min="20" max="300">
+        </div>
+
+        <div class="input-group">
+          <label for="onboardingHeight">Tu Altura en centímetros (cm):</label>
+          <input type="number" id="onboardingHeight" value="175" placeholder="175" min="100" max="250">
+        </div>
+
+        <div class="calc-preview">
+          <span>Meta calculada para tu cuerpo:</span>
+          <strong id="onboardingResultPreview">2450 ml (2.45 L)</strong>
+        </div>
+      </div>
+
+      <div id="onboardingManualSection" class="tab-content">
+        <div class="input-group">
+          <label for="onboardingManualGoal">Escribe tu meta en mililitros (ml):</label>
+          <input type="number" id="onboardingManualGoal" value="2500" placeholder="2500" min="500" max="10000" step="50">
+          <small class="helper-text">1 Litro = 1,000 ml. Por ejemplo, 2.5 L son 2500 ml.</small>
+        </div>
+
+        <div class="quick-goal-chips">
+          <button type="button" class="goal-chip" data-goal="2000">2,000 ml</button>
+          <button type="button" class="goal-chip active" data-goal="2500">2,500 ml</button>
+          <button type="button" class="goal-chip" data-goal="3000">3,000 ml</button>
+        </div>
+      </div>
+
+      <button type="button" class="duo-btn duo-btn-primary" id="onboardingSubmitBtn" style="margin-top: 14px;">
+        ¡Comenzar Mi Reto! 💧
+      </button>
+
+      <div style="margin-top: 8px;">
+        <button type="button" class="text-btn" id="onboardingSkipBtn">
+          Usar 2,500 ml por defecto y empezar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE AJUSTES -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <button class="close-modal-btn" id="closeSettingsBtn">✕</button>
+      <h2 class="modal-title">⚙️ Ajustes de Meta</h2>
+      <p class="modal-desc">Recalcula con tu peso y altura o escribe una cantidad manual.</p>
+
+      <div class="tab-selectors">
+        <button class="tab-btn active" id="tabAuto">Calcular (Recomendado)</button>
+        <button class="tab-btn" id="tabManual">Personalizada</button>
+      </div>
+
+      <form id="calcForm" class="tab-content active">
+        <div class="input-group">
+          <label for="inputWeight">Peso (kg):</label>
+          <input type="number" id="inputWeight" placeholder="70" min="20" max="300" required>
+        </div>
+        <div class="input-group">
+          <label for="inputHeight">Altura (cm):</label>
+          <input type="number" id="inputHeight" placeholder="175" min="100" max="250" required>
+        </div>
+        <div class="calc-preview">
+          <span>Meta calculada:</span>
+          <strong id="calcResultPreview">2450 ml</strong>
+        </div>
+        <button type="submit" class="duo-btn duo-btn-primary">Actualizar Meta</button>
+      </form>
+
+      <form id="manualForm" class="tab-content">
+        <div class="input-group">
+          <label for="inputManualGoal">Meta en mililitros (ml):</label>
+          <input type="number" id="inputManualGoal" placeholder="2500" min="500" max="10000" step="50" required>
+          <small class="helper-text">1 Litro = 1,000 ml. Por ejemplo, 2.5 litros son 2500 ml.</small>
+        </div>
+        <button type="submit" class="duo-btn duo-btn-primary">Guardar Meta Fija</button>
+      </form>
+
+      <div style="margin-top: 16px; border-top: 2px dashed #e2e8f0; padding-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="duo-btn duo-btn-medium" id="testNotifBtn">
+          🧪 Probar Notificación Ahora
+        </button>
+        <button type="button" class="text-btn" id="resetOnboardingBtn" style="color: #0284c7; font-size: 0.85rem;">
+          🔄 Volver a configurar peso, altura o meta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BEBIDA PERSONALIZADA (+) -->
+  <div class="modal-overlay" id="addCustomModal">
+    <div class="modal-card">
+      <button class="close-modal-btn" id="closeAddModalBtn">✕</button>
+      <h2 class="modal-title">➕ Nueva Medida</h2>
+      <p class="modal-desc">Agrega tu termo, shaker o taza favorita al menú.</p>
+
+      <form id="customDrinkForm">
+        <div class="input-group">
+          <label for="customName">Nombre del recipiente:</label>
+          <input type="text" id="customName" placeholder="Ej: Mi Termo Yeti, Taza de té" maxlength="20" required>
+        </div>
+        <div class="input-group">
+          <label for="customAmount">Cantidad en mililitros (ml):</label>
+          <input type="number" id="customAmount" placeholder="Ej: 750" min="50" max="5000" step="10" required>
+        </div>
+        <div class="input-group">
+          <label>Elige un ícono:</label>
+          <div class="icon-selector" id="iconSelector">
+            <button type="button" class="icon-choice active" data-icon="🥤">🥤</button>
+            <button type="button" class="icon-choice" data-icon="☕">☕</button>
+            <button type="button" class="icon-choice" data-icon="🧉">🧉</button>
+            <button type="button" class="icon-choice" data-icon="🧊">🧊</button>
+            <button type="button" class="icon-choice" data-icon="🍶">🍶</button>
+            <button type="button" class="icon-choice" data-icon="🧃">🧃</button>
+          </div>
+        </div>
+        <button type="submit" class="duo-btn duo-btn-primary">Guardar en el Menú</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

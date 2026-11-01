@@ -1,0 +1,18 @@
+{
+  "name": "AquaStreak - Reto Diario de Agua",
+  "short_name": "AquaStreak",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f9ff",
+  "theme_color": "#0284c7",
+  "orientation": "portrait",
+  "description": "Reto gamificado de hidratación diaria estilo Duolingo con sistema de rachas de 24 horas.",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
